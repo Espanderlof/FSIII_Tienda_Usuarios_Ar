@@ -3,6 +3,7 @@ package com.duoc.tienda_usuarios.controller;
 import com.duoc.tienda_usuarios.dto.UsuarioActualizacionDTO;
 import com.duoc.tienda_usuarios.model.LoginRequest;
 import com.duoc.tienda_usuarios.model.Usuario;
+import com.duoc.tienda_usuarios.model.UsuarioBuilder;
 import com.duoc.tienda_usuarios.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,17 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Usuario> crearUsuario(@Valid @RequestBody Usuario usuario) {
+    public ResponseEntity<Usuario> crearUsuario(@Valid @RequestBody Usuario usuarioRequest) {
+        Usuario usuario = UsuarioBuilder.builder()
+            .nombre(usuarioRequest.getNombre())
+            .apellido(usuarioRequest.getApellido())
+            .email(usuarioRequest.getEmail())
+            .password(usuarioRequest.getPassword())
+            .role(usuarioRequest.getRole())
+            .telefono(usuarioRequest.getTelefono())
+            .direccion(usuarioRequest.getDireccion())
+            .build();
+            
         Usuario nuevoUsuario = usuarioService.crearUsuario(usuario);
         return ResponseEntity.ok(nuevoUsuario);
     }
@@ -40,11 +51,12 @@ public class UsuarioController {
             @PathVariable Long id,
             @RequestBody UsuarioActualizacionDTO usuarioDTO) {
         
-        Usuario usuarioParaActualizar = new Usuario();
-        usuarioParaActualizar.setNombre(usuarioDTO.getNombre());
-        usuarioParaActualizar.setApellido(usuarioDTO.getApellido());
-        usuarioParaActualizar.setTelefono(usuarioDTO.getTelefono());
-        usuarioParaActualizar.setDireccion(usuarioDTO.getDireccion());
+        Usuario usuarioParaActualizar = UsuarioBuilder.builder()
+            .nombre(usuarioDTO.getNombre())
+            .apellido(usuarioDTO.getApellido())
+            .telefono(usuarioDTO.getTelefono())
+            .direccion(usuarioDTO.getDireccion())
+            .build();
 
         return usuarioService.actualizarUsuario(id, usuarioParaActualizar)
             .map(ResponseEntity::ok)
