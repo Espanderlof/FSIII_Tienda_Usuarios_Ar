@@ -1,5 +1,6 @@
 package com.duoc.tienda_usuarios.controller;
 
+import com.duoc.tienda_usuarios.dto.PasswordResetDTO;
 import com.duoc.tienda_usuarios.dto.UsuarioActualizacionDTO;
 import com.duoc.tienda_usuarios.model.LoginRequest;
 import com.duoc.tienda_usuarios.model.Usuario;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/usuarios")
+@CrossOrigin(origins = "*")
 public class UsuarioController {
 
     @Autowired
@@ -73,6 +75,13 @@ public class UsuarioController {
     public ResponseEntity<Usuario> login(@RequestBody LoginRequest loginRequest) {
         return usuarioService.login(loginRequest.getEmail(), loginRequest.getPassword())
             .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}/reset-password")
+    public ResponseEntity<Void> resetPassword(@PathVariable Long id, @RequestBody PasswordResetDTO passwordDTO) {
+        return usuarioService.resetPassword(id, passwordDTO.getNewPassword())
+            .map(result -> ResponseEntity.ok().<Void>build())
             .orElse(ResponseEntity.notFound().build());
     }
 }

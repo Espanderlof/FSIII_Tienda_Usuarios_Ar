@@ -87,4 +87,19 @@ public class UsuarioService {
             throw e;
         }
     }
+
+    public Optional<Boolean> resetPassword(Long id, String newPassword) {
+        try {
+            return usuarioRepository.findById(id)
+                .map(usuario -> {
+                    usuario.setPassword(newPassword);
+                    usuarioRepository.save(usuario);
+                    logger.logActualizacion(id);
+                    return true;
+                });
+        } catch (Exception e) {
+            logger.logError("reset password", e.getMessage());
+            throw e;
+        }
+    }
 }
